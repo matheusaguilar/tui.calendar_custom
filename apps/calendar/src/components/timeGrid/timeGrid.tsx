@@ -73,9 +73,13 @@ export function TimeGrid({ timeGridData, events }: Props) {
   const totalUIModels = useMemo(
     () =>
       columns
-        .map(({ date }) =>
+        .map(({ calendarId, date }) =>
           events
-            .filter(isBetween(toStartOfDay(date), toEndOfDay(date)))
+            .filter(
+              calendarId
+                ? (event) => event.model.calendarId === calendarId
+                : isBetween(toStartOfDay(date), toEndOfDay(date))
+            )
             // NOTE: prevent shared reference between columns
             .map((uiModel) => uiModel.clone())
         )
@@ -176,7 +180,7 @@ export function TimeGrid({ timeGridData, events }: Props) {
           <MovingEventShadow gridPositionFinder={gridPositionFinder} timeGridData={timeGridData} />
           {columns.map((column, index) => (
             <Column
-              key={column.date.toString()}
+              key={column.calendarId ? column.calendarId : column.date.toString()}
               timeGridData={timeGridData}
               columnDate={column.date}
               columnWidth={toPercent(column.width)}

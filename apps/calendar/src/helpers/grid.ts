@@ -416,16 +416,12 @@ export function getColumnsData(
     }, []);
 }
 
-export function createTimeGridData(
-  datesOfWeek: TZDate[],
-  options: {
-    hourStart: number;
-    hourEnd: number;
-    narrowWeekend?: boolean;
-    timeStep: number[];
-  }
-): TimeGridData {
-  const columns = getColumnsData(datesOfWeek, options.narrowWeekend ?? false);
+function createTimeGridDataRows(options: {
+  hourStart: number;
+  hourEnd: number;
+  narrowWeekend?: boolean;
+  timeStep: number[];
+}) {
   const { timeStep } = options;
   const steps = (options.hourEnd - options.hourStart) * timeStep.length;
   const baseHeight = 100 / steps;
@@ -449,6 +445,48 @@ export function createTimeGridData(
       endTime,
     };
   });
+
+  return rows;
+}
+
+export function createTimeGridData(
+  datesOfWeek: TZDate[],
+  options: {
+    hourStart: number;
+    hourEnd: number;
+    narrowWeekend?: boolean;
+    timeStep: number[];
+  }
+): TimeGridData {
+  const columns = getColumnsData(datesOfWeek, options.narrowWeekend ?? false);
+  const rows = createTimeGridDataRows(options);
+
+  return {
+    columns,
+    rows,
+  };
+}
+
+export function createDayHorizontalViewTimeGridData(
+  calendarIds: string[],
+  datesOfWeek: TZDate[],
+  options: {
+    hourStart: number;
+    hourEnd: number;
+    narrowWeekend?: boolean;
+    timeStep: number[];
+  }
+): TimeGridData {
+  const columns: CommonGridColumn[] = calendarIds.map((calendarId, index) => {
+    const columnWidth = 100 / calendarIds.length;
+    return {
+      calendarId,
+      date: datesOfWeek[0],
+      width: columnWidth,
+      left: columnWidth * index,
+    };
+  });
+  const rows = createTimeGridDataRows(options);
 
   return {
     columns,

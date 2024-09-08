@@ -13,7 +13,11 @@ import { useStore } from '@src/contexts/calendarStore';
 import { useTheme } from '@src/contexts/themeStore';
 import { cls } from '@src/helpers/css';
 import { getDayNames } from '@src/helpers/dayName';
-import { createTimeGridData, getWeekViewEvents } from '@src/helpers/grid';
+import {
+  createDayHorizontalViewTimeGridData,
+  createTimeGridData,
+  getWeekViewEvents,
+} from '@src/helpers/grid';
 import { getActivePanels } from '@src/helpers/view';
 import { useCalendarData } from '@src/hooks/calendar/useCalendarData';
 import { useDOMNode } from '@src/hooks/common/useDOMNode';
@@ -67,6 +71,7 @@ export function Day() {
     eventView,
     taskView,
     timeStep,
+    horizontalDayView,
   } = weekOptions;
   const days = useMemo(() => [renderDate], [renderDate]);
   const dayNames = getDayNames(days, options.week?.dayNames ?? []);
@@ -97,16 +102,25 @@ export function Day() {
       weekEndDate,
     });
   }, [calendarData, days, hourEnd, hourStart, narrowWeekend, primaryTimezoneName]);
-  const timeGridData = useMemo(
-    () =>
-      createTimeGridData(days, {
-        hourStart,
-        hourEnd,
-        narrowWeekend,
-        timeStep,
-      }),
-    [days, hourEnd, hourStart, narrowWeekend, timeStep]
-  );
+
+  const timeGridData = useMemo(() => {
+    const calendarIds = calendar.calendars.map((calendarMap) => calendarMap.id);
+
+    return calendarIds.length > 0 && horizontalDayView
+      ? createDayHorizontalViewTimeGridData(calendarIds, days, {
+          hourStart,
+          hourEnd,
+          narrowWeekend,
+          timeStep,
+        })
+      : createTimeGridData(days, {
+          hourStart,
+          hourEnd,
+          narrowWeekend,
+          timeStep,
+        });
+  }, [calendar.calendars, horizontalDayView, days, hourEnd, hourStart, narrowWeekend, timeStep]);
+
   const activePanels = getActivePanels(taskView, eventView);
   const gridRows = activePanels.map((key) => {
     if (key === 'time') {

@@ -16,6 +16,7 @@ export interface GridPosition {
 }
 
 export interface CommonGridColumn {
+  calendarId?: string;
   date: TZDate;
   left: number;
   width: number;
