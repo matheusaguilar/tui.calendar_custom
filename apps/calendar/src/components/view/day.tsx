@@ -35,6 +35,8 @@ import { addDate, getRowStyleInfo, toEndOfDay, toStartOfDay } from '@src/time/da
 import type { WeekOptions } from '@t/options';
 import type { AlldayEventCategory } from '@t/panel';
 
+import { HorizontalGridRow } from '../dayGridWeek/horizontalGridRow';
+
 function useDayViewState() {
   const calendar = useStore(calendarSelector);
   const options = useStore(optionsSelector);
@@ -103,10 +105,16 @@ export function Day() {
     });
   }, [calendarData, days, hourEnd, hourStart, narrowWeekend, primaryTimezoneName]);
 
-  const timeGridData = useMemo(() => {
-    const calendarIds = calendar.calendars.map((calendarMap) => calendarMap.id);
+  const calendarIds = useMemo(() => {
+    return calendar.calendars.map((calendarMap) => calendarMap.id);
+  }, [calendar.calendars]);
 
-    return calendarIds.length > 0 && horizontalDayView
+  const showHorizontalView = useMemo(() => {
+    return calendarIds.length > 0 && horizontalDayView;
+  }, [calendarIds, horizontalDayView]);
+
+  const timeGridData = useMemo(() => {
+    return showHorizontalView
       ? createDayHorizontalViewTimeGridData(calendarIds, days, {
           hourStart,
           hourEnd,
@@ -119,40 +127,65 @@ export function Day() {
           narrowWeekend,
           timeStep,
         });
-  }, [calendar.calendars, horizontalDayView, days, hourEnd, hourStart, narrowWeekend, timeStep]);
+  }, [showHorizontalView, calendarIds, days, hourEnd, hourStart, narrowWeekend, timeStep]);
 
-  const activePanels = getActivePanels(taskView, eventView);
-  const gridRows = activePanels.map((key) => {
-    if (key === 'time') {
-      return null;
-    }
+  const activePanels = useMemo(
+    () => getActivePanels(taskView, eventView, showHorizontalView),
+    [taskView, eventView, showHorizontalView]
+  );
 
-    const rowType = key as AlldayEventCategory;
+  const gridRows = useMemo(
+    () =>
+      activePanels.map((key) => {
+        if (key === 'time') {
+          return null;
+        }
 
-    return (
-      <Panel key={rowType} name={rowType} resizable={rowType !== lastPanelType}>
-        {rowType === 'allday' ? (
-          <AlldayGridRow
-            events={dayGridEvents[rowType]}
-            rowStyleInfo={rowStyleInfo}
-            gridColWidthMap={cellWidthMap}
-            weekDates={days}
-            height={gridRowLayout[rowType]?.height}
-            options={weekOptions}
-          />
-        ) : (
-          <OtherGridRow
-            category={rowType}
-            events={dayGridEvents[rowType]}
-            weekDates={days}
-            height={gridRowLayout[rowType]?.height}
-            options={weekOptions}
-            gridColWidthMap={cellWidthMap}
-          />
-        )}
-      </Panel>
-    );
-  });
+        const rowType = key as AlldayEventCategory;
+
+        return (
+          <Panel key={rowType} name={rowType} resizable={rowType !== lastPanelType}>
+            {rowType === 'allday' && (
+              <AlldayGridRow
+                events={dayGridEvents[rowType]}
+                rowStyleInfo={rowStyleInfo}
+                gridColWidthMap={cellWidthMap}
+                weekDates={days}
+                height={gridRowLayout[rowType]?.height}
+                options={weekOptions}
+              />
+            )}
+
+            {rowType === 'horizontalCalendarView' && calendarIds.length > 0 && (
+              <HorizontalGridRow calendars={calendar.calendars} />
+            )}
+
+            {rowType !== 'allday' && rowType !== 'horizontalCalendarView' && (
+              <OtherGridRow
+                category={rowType}
+                events={dayGridEvents[rowType]}
+                weekDates={days}
+                height={gridRowLayout[rowType]?.height}
+                options={weekOptions}
+                gridColWidthMap={cellWidthMap}
+              />
+            )}
+          </Panel>
+        );
+      }),
+    [
+      calendarIds,
+      calendar.calendars,
+      activePanels,
+      cellWidthMap,
+      dayGridEvents,
+      days,
+      gridRowLayout,
+      lastPanelType,
+      rowStyleInfo,
+      weekOptions,
+    ]
+  );
 
   useTimeGridScrollSync(timePanel, timeGridData.rows.length);
 

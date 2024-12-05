@@ -1,4 +1,4 @@
-export type AlldayEventCategory = 'milestone' | 'allday' | 'task';
+export type AlldayEventCategory = 'milestone' | 'allday' | 'task' | 'horizontalCalendarView';
 
 export type PanelType = 'daygrid' | 'timegrid';
 

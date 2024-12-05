@@ -104,7 +104,7 @@ export const Panel = forwardRef<HTMLDivElement, PropsWithChildren<Props>>(functi
 
   const styles = getPanelStyle({
     initialWidth,
-    initialHeight: height,
+    initialHeight: name === 'horizontalCalendarView' ? 30 : height,
     overflowX,
     overflowY,
     maxExpandableWidth,

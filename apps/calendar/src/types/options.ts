@@ -8,6 +8,7 @@ import type { ThemeState } from '@t/theme';
 
 export type EventView = 'allday' | 'time';
 export type TaskView = 'milestone' | 'task';
+export type HorizontalCalendarView = 'horizontalCalendarView';
 
 export interface CollapseDuplicateEventsOptions {
   getDuplicateEvents: (
@@ -65,6 +66,7 @@ export interface CalendarColor {
   backgroundColor?: string;
   dragBackgroundColor?: string;
   borderColor?: string;
+  avatarIcon?: JSX.Element;
 }
 
 export interface CalendarInfo extends CalendarColor {

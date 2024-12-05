@@ -48,6 +48,8 @@ export function useDrag(
   const { initDrag, setDragging, cancelDrag, reset } = useDispatch('dnd');
 
   const store = useInternalStore();
+  const { currentView } = store.getState().view;
+  const preventHorizontalMove = store.getState().options.week.horizontalDayView;
   const dndSliceRef = useRef(store.getState().dnd);
   useTransientUpdate(dndSelector, (dndState) => {
     dndSliceRef.current = dndState;
@@ -116,10 +118,13 @@ export function useDrag(
         return;
       }
 
-      setDragging({ x: e.clientX, y: e.clientY });
+      setDragging({
+        x: preventHorizontalMove && currentView === 'day' ? initX : e.clientX,
+        y: e.clientY,
+      });
       onDrag?.(e, dndSliceRef.current);
     },
-    [draggingItemType, onDrag, onDragStart, setDragging, reset]
+    [currentView, preventHorizontalMove, draggingItemType, onDrag, onDragStart, setDragging, reset]
   );
 
   const handleMouseUp = useCallback<MouseEventListener>(
