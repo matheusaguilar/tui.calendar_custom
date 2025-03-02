@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks';
 
 import { KEY } from '@src/constants/keyboard';
 import { MINIMUM_DRAG_MOUSE_DISTANCE } from '@src/constants/mouse';
@@ -49,7 +49,7 @@ export function useDrag(
 
   const store = useInternalStore();
   const { currentView } = store.getState().view;
-  const preventHorizontalMove = store.getState().options.week.horizontalDayView;
+  const { horizontalDayView } = store.getState().options.week;
   const dndSliceRef = useRef(store.getState().dnd);
   useTransientUpdate(dndSelector, (dndState) => {
     dndSliceRef.current = dndState;
@@ -60,6 +60,10 @@ export function useDrag(
   const handleMouseMoveRef = useRef<MouseEventListener | null>(null);
   const handleMouseUpRef = useRef<MouseEventListener | null>(null);
   const handleKeyDownRef = useRef<KeyboardEventListener | null>(null);
+
+  const shouldPreventHorizontalMove = useMemo(() => {
+    return horizontalDayView && currentView === 'day';
+  }, [currentView, horizontalDayView]);
 
   const handleMouseDown = useCallback<MouseEventListener>(
     (e) => {
@@ -77,14 +81,22 @@ export function useDrag(
       e.preventDefault();
 
       setStarted(true);
+
+      const columnElementProps = (
+        e.currentTarget as HTMLElement
+      )?.parentElement?.getBoundingClientRect();
+
       initDrag({
         draggingItemType,
-        initX: e.clientX,
+        initX:
+          shouldPreventHorizontalMove && columnElementProps
+            ? columnElementProps.x + columnElementProps.width
+            : e.clientX,
         initY: e.clientY,
       });
       onInit?.(e, dndSliceRef.current);
     },
-    [onInit, draggingItemType, initDrag]
+    [shouldPreventHorizontalMove, onInit, draggingItemType, initDrag]
   );
 
   const handleMouseMove = useCallback<MouseEventListener>(
@@ -119,12 +131,12 @@ export function useDrag(
       }
 
       setDragging({
-        x: preventHorizontalMove && currentView === 'day' ? initX : e.clientX,
+        x: shouldPreventHorizontalMove ? initX : e.clientX,
         y: e.clientY,
       });
       onDrag?.(e, dndSliceRef.current);
     },
-    [currentView, preventHorizontalMove, draggingItemType, onDrag, onDragStart, setDragging, reset]
+    [shouldPreventHorizontalMove, draggingItemType, onDrag, onDragStart, setDragging, reset]
   );
 
   const handleMouseUp = useCallback<MouseEventListener>(
