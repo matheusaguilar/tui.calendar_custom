@@ -1,5 +1,6 @@
 {
   "name": "tui-calendar",
+  "version": "1.0.0",
   "devDependencies": {
     "@babel/core": "^7.18.9",
     "@babel/plugin-transform-react-jsx": "^7.18.6",
