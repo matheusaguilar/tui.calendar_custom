@@ -31,7 +31,7 @@ var __objRest = (source, exclude) => {
 };
 /*!
  * TOAST UI Calendar 2nd Edition
- * @version 2.1.3 | Thu Apr 10 2025
+ * @version 2.1.3 | Fri Apr 11 2025
  * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -9051,7 +9051,7 @@ function Day$1() {
       key: rowType,
       name: rowType,
       resizable: rowType !== lastPanelType
-    }, rowType === "allday" && /* @__PURE__ */ h$3(AlldayGridRow, {
+    }, rowType === "allday" && !showHorizontalView && /* @__PURE__ */ h$3(AlldayGridRow, {
       events: dayGridEvents[rowType],
       rowStyleInfo,
       gridColWidthMap: cellWidthMap,

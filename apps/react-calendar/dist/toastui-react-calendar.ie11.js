@@ -5076,7 +5076,7 @@ var __publicField = (obj, key, value) => {
   }
   /*!
    * TOAST UI Calendar 2nd Edition
-   * @version 2.1.3 | Thu Apr 10 2025
+   * @version 2.1.3 | Fri Apr 11 2025
    * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
    * @license MIT
    */
@@ -24283,7 +24283,7 @@ var __publicField = (obj, key, value) => {
                   key: rowType,
                   name: rowType,
                   resizable: rowType !== lastPanelType
-                }, rowType === "allday" && h(AlldayGridRow, {
+                }, rowType === "allday" && !showHorizontalView && h(AlldayGridRow, {
                   events: dayGridEvents[rowType],
                   rowStyleInfo,
                   gridColWidthMap: cellWidthMap,

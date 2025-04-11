@@ -14105,7 +14105,7 @@ var __publicField = (obj, key, value) => {
         key: rowType,
         name: rowType,
         resizable: rowType !== lastPanelType
-      }, rowType === "allday" && /* @__PURE__ */ h$3(AlldayGridRow, {
+      }, rowType === "allday" && !showHorizontalView && /* @__PURE__ */ h$3(AlldayGridRow, {
         events: dayGridEvents[rowType],
         rowStyleInfo,
         gridColWidthMap: cellWidthMap,

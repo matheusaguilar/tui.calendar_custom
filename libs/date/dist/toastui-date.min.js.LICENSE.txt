@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Date
- * @version 0.0.3 | Thu Apr 10 2025
+ * @version 0.0.3 | Fri Apr 11 2025
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */

@@ -145,7 +145,7 @@ export function Day() {
 
         return (
           <Panel key={rowType} name={rowType} resizable={rowType !== lastPanelType}>
-            {rowType === 'allday' && (
+            {rowType === 'allday' && !showHorizontalView && (
               <AlldayGridRow
                 events={dayGridEvents[rowType]}
                 rowStyleInfo={rowStyleInfo}
