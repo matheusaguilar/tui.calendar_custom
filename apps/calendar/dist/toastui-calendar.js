@@ -17492,7 +17492,8 @@ function day_Day() {
     });
   }, [showHorizontalView, calendarIds, days, hourEnd, hourStart, narrowWeekend, timeStep]);
   const activePanels = F(() => getActivePanels(taskView, eventView, showHorizontalView), [taskView, eventView, showHorizontalView]);
-  const gridRows = F(() => activePanels.map(key => {
+  const gridRows = F(() => // eslint-disable-next-line complexity
+  activePanels.map(key => {
     var _gridRowLayout$rowTyp, _gridRowLayout$rowTyp2;
 
     if (key === 'time') {
@@ -17500,11 +17501,16 @@ function day_Day() {
     }
 
     const rowType = key;
+
+    if (rowType === 'allday' && showHorizontalView) {
+      return null;
+    }
+
     return h(Panel, {
       key: rowType,
       name: rowType,
       resizable: rowType !== lastPanelType
-    }, rowType === 'allday' && !showHorizontalView && h(AlldayGridRow, {
+    }, rowType === 'allday' && h(AlldayGridRow, {
       events: dayGridEvents[rowType],
       rowStyleInfo: rowStyleInfo,
       gridColWidthMap: cellWidthMap,
@@ -17522,7 +17528,7 @@ function day_Day() {
       options: weekOptions,
       gridColWidthMap: cellWidthMap
     }));
-  }), [calendarIds, calendar.calendars, activePanels, cellWidthMap, dayGridEvents, days, gridRowLayout, lastPanelType, rowStyleInfo, weekOptions, timeGridData]);
+  }), [calendarIds, calendar.calendars, activePanels, cellWidthMap, dayGridEvents, days, gridRowLayout, lastPanelType, rowStyleInfo, weekOptions, timeGridData, showHorizontalView]);
   useTimeGridScrollSync(timePanel, timeGridData.rows.length);
   const stickyTop = useTimezoneLabelsTop(timePanel);
   return h(Layout, {

@@ -24279,11 +24279,14 @@ var __publicField = (obj, key, value) => {
                   return null;
                 }
                 var rowType = key;
+                if (rowType === "allday" && showHorizontalView) {
+                  return null;
+                }
                 return h(Panel, {
                   key: rowType,
                   name: rowType,
                   resizable: rowType !== lastPanelType
-                }, rowType === "allday" && !showHorizontalView && h(AlldayGridRow, {
+                }, rowType === "allday" && h(AlldayGridRow, {
                   events: dayGridEvents[rowType],
                   rowStyleInfo,
                   gridColWidthMap: cellWidthMap,
@@ -24302,7 +24305,7 @@ var __publicField = (obj, key, value) => {
                   gridColWidthMap: cellWidthMap
                 }));
               });
-            }, [calendarIds, calendar.calendars, activePanels, cellWidthMap, dayGridEvents, days, gridRowLayout, lastPanelType, rowStyleInfo, weekOptions, timeGridData]);
+            }, [calendarIds, calendar.calendars, activePanels, cellWidthMap, dayGridEvents, days, gridRowLayout, lastPanelType, rowStyleInfo, weekOptions, timeGridData, showHorizontalView]);
             useTimeGridScrollSync(timePanel, timeGridData.rows.length);
             var stickyTop = useTimezoneLabelsTop(timePanel);
             return h(Layout, {

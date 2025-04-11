@@ -136,6 +136,7 @@ export function Day() {
 
   const gridRows = useMemo(
     () =>
+      // eslint-disable-next-line complexity
       activePanels.map((key) => {
         if (key === 'time') {
           return null;
@@ -143,9 +144,13 @@ export function Day() {
 
         const rowType = key as AlldayEventCategory;
 
+        if (rowType === 'allday' && showHorizontalView) {
+          return null;
+        }
+
         return (
           <Panel key={rowType} name={rowType} resizable={rowType !== lastPanelType}>
-            {rowType === 'allday' && !showHorizontalView && (
+            {rowType === 'allday' && (
               <AlldayGridRow
                 events={dayGridEvents[rowType]}
                 rowStyleInfo={rowStyleInfo}
@@ -185,6 +190,7 @@ export function Day() {
       rowStyleInfo,
       weekOptions,
       timeGridData,
+      showHorizontalView,
     ]
   );
 

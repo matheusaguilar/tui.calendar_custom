@@ -14101,11 +14101,14 @@ var __publicField = (obj, key, value) => {
         return null;
       }
       const rowType = key;
+      if (rowType === "allday" && showHorizontalView) {
+        return null;
+      }
       return /* @__PURE__ */ h$3(Panel, {
         key: rowType,
         name: rowType,
         resizable: rowType !== lastPanelType
-      }, rowType === "allday" && !showHorizontalView && /* @__PURE__ */ h$3(AlldayGridRow, {
+      }, rowType === "allday" && /* @__PURE__ */ h$3(AlldayGridRow, {
         events: dayGridEvents[rowType],
         rowStyleInfo,
         gridColWidthMap: cellWidthMap,
@@ -14134,7 +14137,8 @@ var __publicField = (obj, key, value) => {
       lastPanelType,
       rowStyleInfo,
       weekOptions,
-      timeGridData
+      timeGridData,
+      showHorizontalView
     ]);
     useTimeGridScrollSync(timePanel, timeGridData.rows.length);
     const stickyTop = useTimezoneLabelsTop(timePanel);

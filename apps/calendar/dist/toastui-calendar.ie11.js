@@ -24714,38 +24714,45 @@ function day_Day() {
     return getActivePanels(taskView, eventView, showHorizontalView);
   }, [taskView, eventView, showHorizontalView]);
   var gridRows = F(function () {
-    return activePanels.map(function (key) {
-      var _gridRowLayout$rowTyp, _gridRowLayout$rowTyp2;
+    return (// eslint-disable-next-line complexity
+      activePanels.map(function (key) {
+        var _gridRowLayout$rowTyp, _gridRowLayout$rowTyp2;
 
-      if (key === 'time') {
-        return null;
-      }
+        if (key === 'time') {
+          return null;
+        }
 
-      var rowType = key;
-      return h(Panel, {
-        key: rowType,
-        name: rowType,
-        resizable: rowType !== lastPanelType
-      }, rowType === 'allday' && !showHorizontalView && h(AlldayGridRow, {
-        events: dayGridEvents[rowType],
-        rowStyleInfo: rowStyleInfo,
-        gridColWidthMap: cellWidthMap,
-        weekDates: days,
-        height: (_gridRowLayout$rowTyp = gridRowLayout[rowType]) === null || _gridRowLayout$rowTyp === void 0 ? void 0 : _gridRowLayout$rowTyp.height,
-        options: weekOptions
-      }), rowType === 'horizontalCalendarView' && calendarIds.length > 0 && h(HorizontalGridRow, {
-        calendars: calendar.calendars,
-        timeGridData: timeGridData
-      }), rowType !== 'allday' && rowType !== 'horizontalCalendarView' && h(OtherGridRow, {
-        category: rowType,
-        events: dayGridEvents[rowType],
-        weekDates: days,
-        height: (_gridRowLayout$rowTyp2 = gridRowLayout[rowType]) === null || _gridRowLayout$rowTyp2 === void 0 ? void 0 : _gridRowLayout$rowTyp2.height,
-        options: weekOptions,
-        gridColWidthMap: cellWidthMap
-      }));
-    });
-  }, [calendarIds, calendar.calendars, activePanels, cellWidthMap, dayGridEvents, days, gridRowLayout, lastPanelType, rowStyleInfo, weekOptions, timeGridData]);
+        var rowType = key;
+
+        if (rowType === 'allday' && showHorizontalView) {
+          return null;
+        }
+
+        return h(Panel, {
+          key: rowType,
+          name: rowType,
+          resizable: rowType !== lastPanelType
+        }, rowType === 'allday' && h(AlldayGridRow, {
+          events: dayGridEvents[rowType],
+          rowStyleInfo: rowStyleInfo,
+          gridColWidthMap: cellWidthMap,
+          weekDates: days,
+          height: (_gridRowLayout$rowTyp = gridRowLayout[rowType]) === null || _gridRowLayout$rowTyp === void 0 ? void 0 : _gridRowLayout$rowTyp.height,
+          options: weekOptions
+        }), rowType === 'horizontalCalendarView' && calendarIds.length > 0 && h(HorizontalGridRow, {
+          calendars: calendar.calendars,
+          timeGridData: timeGridData
+        }), rowType !== 'allday' && rowType !== 'horizontalCalendarView' && h(OtherGridRow, {
+          category: rowType,
+          events: dayGridEvents[rowType],
+          weekDates: days,
+          height: (_gridRowLayout$rowTyp2 = gridRowLayout[rowType]) === null || _gridRowLayout$rowTyp2 === void 0 ? void 0 : _gridRowLayout$rowTyp2.height,
+          options: weekOptions,
+          gridColWidthMap: cellWidthMap
+        }));
+      })
+    );
+  }, [calendarIds, calendar.calendars, activePanels, cellWidthMap, dayGridEvents, days, gridRowLayout, lastPanelType, rowStyleInfo, weekOptions, timeGridData, showHorizontalView]);
   useTimeGridScrollSync(timePanel, timeGridData.rows.length);
   var stickyTop = useTimezoneLabelsTop(timePanel);
   return h(Layout, {
