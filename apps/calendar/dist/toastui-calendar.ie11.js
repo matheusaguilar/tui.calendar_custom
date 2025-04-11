@@ -21814,7 +21814,7 @@ var Panel = R(function Panel(_ref2, ref) {
   }, [initialHeight, name, updateDayGridRowHeight]);
   var styles = getPanelStyle({
     initialWidth: initialWidth,
-    initialHeight: name === 'horizontalCalendarView' ? 30 : height,
+    initialHeight: name === 'horizontalCalendarView' ? 60 : height,
     overflowX: overflowX,
     overflowY: overflowY,
     maxExpandableWidth: maxExpandableWidth,
@@ -24462,14 +24462,55 @@ function useTimezoneLabelsTop(timePanel) {
 
 
 
+
+
+
+
+
+
+
+
+
+function horizontalGridRow_slicedToArray(arr, i) { return horizontalGridRow_arrayWithHoles(arr) || horizontalGridRow_iterableToArrayLimit(arr, i) || horizontalGridRow_unsupportedIterableToArray(arr, i) || horizontalGridRow_nonIterableRest(); }
+
+function horizontalGridRow_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function horizontalGridRow_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return horizontalGridRow_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return horizontalGridRow_arrayLikeToArray(o, minLen); }
+
+function horizontalGridRow_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function horizontalGridRow_iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function horizontalGridRow_arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+
+
+
+
+
 function HorizontalGridRow(_ref) {
-  var calendars = _ref.calendars;
+  var calendars = _ref.calendars,
+      timeGridData = _ref.timeGridData;
   var dayGridLeftTheme = useTheme(weekDayGridLeftSelector);
   var widthSize = window.innerWidth;
+  var panelRef = hooks_module_s(null);
+
+  var _useState = hooks_module_y(150),
+      _useState2 = horizontalGridRow_slicedToArray(_useState, 2),
+      panelWidth = _useState2[0],
+      setPanelWidth = _useState2[1];
+
+  hooks_module_(function () {
+    if (panelRef.current && timeGridData.columns.length > 0) {
+      var maxWidth = panelRef.current.offsetWidth / timeGridData.columns.length;
+      setPanelWidth(Math.max(maxWidth, 150));
+    }
+  }, [timeGridData]);
   return h(p, null, h("div", {
     className: cls('panel-title'),
     style: dayGridLeftTheme
   }), h("div", {
+    ref: panelRef,
     className: cls('allday-panel')
   }, h("div", {
     className: cls('panel-grid-wrapper')
@@ -24484,16 +24525,26 @@ function HorizontalGridRow(_ref) {
       style: {
         display: 'flex',
         width: "100%",
+        maxWidth: "".concat(panelWidth, "px"),
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        borderRight: '1px solid rgb(229, 229, 229)',
+        padding: '2px'
       }
-    }, calendar.avatarIcon && h("div", {
+    }, h("div", {
+      className: cls('avatar-icon'),
       style: {
-        marginRight: '6px'
+        width: calendar.avatarIcon ? '36px' : '32px',
+        height: calendar.avatarIcon ? '36px' : '32px',
+        backgroundImage: calendar.avatarIcon ? "url(".concat(calendar.avatarIcon, ")") : null
       }
-    }, calendar.avatarIcon), h("span", {
+    }), h("span", {
       style: {
-        fontSize: widthSize > 900 ? '14px' : '12px'
+        fontSize: widthSize > 900 ? '14px' : '12px',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        width: 'calc(100% - 46px)'
       }
     }, calendar.name));
   })))));
@@ -24683,7 +24734,8 @@ function day_Day() {
         height: (_gridRowLayout$rowTyp = gridRowLayout[rowType]) === null || _gridRowLayout$rowTyp === void 0 ? void 0 : _gridRowLayout$rowTyp.height,
         options: weekOptions
       }), rowType === 'horizontalCalendarView' && calendarIds.length > 0 && h(HorizontalGridRow, {
-        calendars: calendar.calendars
+        calendars: calendar.calendars,
+        timeGridData: timeGridData
       }), rowType !== 'allday' && rowType !== 'horizontalCalendarView' && h(OtherGridRow, {
         category: rowType,
         events: dayGridEvents[rowType],
@@ -24693,7 +24745,7 @@ function day_Day() {
         gridColWidthMap: cellWidthMap
       }));
     });
-  }, [calendarIds, calendar.calendars, activePanels, cellWidthMap, dayGridEvents, days, gridRowLayout, lastPanelType, rowStyleInfo, weekOptions]);
+  }, [calendarIds, calendar.calendars, activePanels, cellWidthMap, dayGridEvents, days, gridRowLayout, lastPanelType, rowStyleInfo, weekOptions, timeGridData]);
   useTimeGridScrollSync(timePanel, timeGridData.rows.length);
   var stickyTop = useTimezoneLabelsTop(timePanel);
   return h(Layout, {

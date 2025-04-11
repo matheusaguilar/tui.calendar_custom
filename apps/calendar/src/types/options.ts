@@ -66,7 +66,7 @@ export interface CalendarColor {
   backgroundColor?: string;
   dragBackgroundColor?: string;
   borderColor?: string;
-  avatarIcon?: JSX.Element;
+  avatarIcon?: string;
 }
 
 export interface CalendarInfo extends CalendarColor {

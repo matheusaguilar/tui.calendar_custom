@@ -157,7 +157,7 @@ export function Day() {
             )}
 
             {rowType === 'horizontalCalendarView' && calendarIds.length > 0 && (
-              <HorizontalGridRow calendars={calendar.calendars} />
+              <HorizontalGridRow calendars={calendar.calendars} timeGridData={timeGridData} />
             )}
 
             {rowType !== 'allday' && rowType !== 'horizontalCalendarView' && (
@@ -184,6 +184,7 @@ export function Day() {
       lastPanelType,
       rowStyleInfo,
       weekOptions,
+      timeGridData,
     ]
   );
 

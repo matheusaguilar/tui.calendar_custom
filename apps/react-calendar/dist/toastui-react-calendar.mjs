@@ -12532,7 +12532,7 @@ const Panel = R(function Panel2({
   }, [initialHeight, name, updateDayGridRowHeight]);
   const styles = getPanelStyle({
     initialWidth,
-    initialHeight: name === "horizontalCalendarView" ? 30 : height,
+    initialHeight: name === "horizontalCalendarView" ? 60 : height,
     overflowX,
     overflowY,
     maxExpandableWidth,
@@ -13968,13 +13968,22 @@ function useTimezoneLabelsTop(timePanel) {
   }, [timeGridPanelHeight, timePanel]);
   return stickyTop;
 }
-function HorizontalGridRow({ calendars }) {
+function HorizontalGridRow({ calendars, timeGridData }) {
   const dayGridLeftTheme = useTheme(weekDayGridLeftSelector);
   const widthSize = window.innerWidth;
+  const panelRef = s$2(null);
+  const [panelWidth, setPanelWidth] = y$1(150);
+  _$2(() => {
+    if (panelRef.current && timeGridData.columns.length > 0) {
+      const maxWidth = panelRef.current.offsetWidth / timeGridData.columns.length;
+      setPanelWidth(Math.max(maxWidth, 150));
+    }
+  }, [timeGridData]);
   return /* @__PURE__ */ h$3(p$3, null, /* @__PURE__ */ h$3("div", {
     className: cls("panel-title"),
     style: dayGridLeftTheme
   }), /* @__PURE__ */ h$3("div", {
+    ref: panelRef,
     className: cls("allday-panel")
   }, /* @__PURE__ */ h$3("div", {
     className: cls("panel-grid-wrapper")
@@ -13985,13 +13994,27 @@ function HorizontalGridRow({ calendars }) {
     style: {
       display: "flex",
       width: `100%`,
+      maxWidth: `${panelWidth}px`,
       alignItems: "center",
-      justifyContent: "center"
+      justifyContent: "center",
+      borderRight: "1px solid rgb(229, 229, 229)",
+      padding: "2px"
     }
-  }, calendar.avatarIcon && /* @__PURE__ */ h$3("div", {
-    style: { marginRight: "6px" }
-  }, calendar.avatarIcon), /* @__PURE__ */ h$3("span", {
-    style: { fontSize: widthSize > 900 ? "14px" : "12px" }
+  }, /* @__PURE__ */ h$3("div", {
+    className: cls("avatar-icon"),
+    style: {
+      width: calendar.avatarIcon ? "36px" : "32px",
+      height: calendar.avatarIcon ? "36px" : "32px",
+      backgroundImage: calendar.avatarIcon ? `url(${calendar.avatarIcon})` : null
+    }
+  }), /* @__PURE__ */ h$3("span", {
+    style: {
+      fontSize: widthSize > 900 ? "14px" : "12px",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      width: "calc(100% - 46px)"
+    }
   }, calendar.name)))))));
 }
 function useDayViewState() {
@@ -14083,7 +14106,8 @@ function Day$1() {
       height: (_a2 = gridRowLayout[rowType]) == null ? void 0 : _a2.height,
       options: weekOptions
     }), rowType === "horizontalCalendarView" && calendarIds.length > 0 && /* @__PURE__ */ h$3(HorizontalGridRow, {
-      calendars: calendar.calendars
+      calendars: calendar.calendars,
+      timeGridData
     }), rowType !== "allday" && rowType !== "horizontalCalendarView" && /* @__PURE__ */ h$3(OtherGridRow, {
       category: rowType,
       events: dayGridEvents[rowType],
@@ -14102,7 +14126,8 @@ function Day$1() {
     gridRowLayout,
     lastPanelType,
     rowStyleInfo,
-    weekOptions
+    weekOptions,
+    timeGridData
   ]);
   useTimeGridScrollSync(timePanel, timeGridData.rows.length);
   const stickyTop = useTimezoneLabelsTop(timePanel);

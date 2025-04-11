@@ -15030,7 +15030,7 @@ const Panel = compat_module_R(function Panel(_ref2, ref) {
   }, [initialHeight, name, updateDayGridRowHeight]);
   const styles = getPanelStyle({
     initialWidth,
-    initialHeight: name === 'horizontalCalendarView' ? 30 : height,
+    initialHeight: name === 'horizontalCalendarView' ? 60 : height,
     overflowX,
     overflowY,
     maxExpandableWidth,
@@ -17316,16 +17316,28 @@ function useTimezoneLabelsTop(timePanel) {
 
 
 
+
+
 function HorizontalGridRow(_ref) {
   let {
-    calendars
+    calendars,
+    timeGridData
   } = _ref;
   const dayGridLeftTheme = useTheme(weekDayGridLeftSelector);
   const widthSize = window.innerWidth;
+  const panelRef = hooks_module_s(null);
+  const [panelWidth, setPanelWidth] = hooks_module_y(150);
+  hooks_module_(() => {
+    if (panelRef.current && timeGridData.columns.length > 0) {
+      const maxWidth = panelRef.current.offsetWidth / timeGridData.columns.length;
+      setPanelWidth(Math.max(maxWidth, 150));
+    }
+  }, [timeGridData]);
   return h(p, null, h("div", {
     className: cls('panel-title'),
     style: dayGridLeftTheme
   }), h("div", {
+    ref: panelRef,
     className: cls('allday-panel')
   }, h("div", {
     className: cls('panel-grid-wrapper')
@@ -17339,16 +17351,26 @@ function HorizontalGridRow(_ref) {
     style: {
       display: 'flex',
       width: "100%",
+      maxWidth: "".concat(panelWidth, "px"),
       alignItems: 'center',
-      justifyContent: 'center'
+      justifyContent: 'center',
+      borderRight: '1px solid rgb(229, 229, 229)',
+      padding: '2px'
     }
-  }, calendar.avatarIcon && h("div", {
+  }, h("div", {
+    className: cls('avatar-icon'),
     style: {
-      marginRight: '6px'
+      width: calendar.avatarIcon ? '36px' : '32px',
+      height: calendar.avatarIcon ? '36px' : '32px',
+      backgroundImage: calendar.avatarIcon ? "url(".concat(calendar.avatarIcon, ")") : null
     }
-  }, calendar.avatarIcon), h("span", {
+  }), h("span", {
     style: {
-      fontSize: widthSize > 900 ? '14px' : '12px'
+      fontSize: widthSize > 900 ? '14px' : '12px',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+      width: 'calc(100% - 46px)'
     }
   }, calendar.name)))))));
 }
@@ -17490,7 +17512,8 @@ function day_Day() {
       height: (_gridRowLayout$rowTyp = gridRowLayout[rowType]) === null || _gridRowLayout$rowTyp === void 0 ? void 0 : _gridRowLayout$rowTyp.height,
       options: weekOptions
     }), rowType === 'horizontalCalendarView' && calendarIds.length > 0 && h(HorizontalGridRow, {
-      calendars: calendar.calendars
+      calendars: calendar.calendars,
+      timeGridData: timeGridData
     }), rowType !== 'allday' && rowType !== 'horizontalCalendarView' && h(OtherGridRow, {
       category: rowType,
       events: dayGridEvents[rowType],
@@ -17499,7 +17522,7 @@ function day_Day() {
       options: weekOptions,
       gridColWidthMap: cellWidthMap
     }));
-  }), [calendarIds, calendar.calendars, activePanels, cellWidthMap, dayGridEvents, days, gridRowLayout, lastPanelType, rowStyleInfo, weekOptions]);
+  }), [calendarIds, calendar.calendars, activePanels, cellWidthMap, dayGridEvents, days, gridRowLayout, lastPanelType, rowStyleInfo, weekOptions, timeGridData]);
   useTimeGridScrollSync(timePanel, timeGridData.rows.length);
   const stickyTop = useTimezoneLabelsTop(timePanel);
   return h(Layout, {
